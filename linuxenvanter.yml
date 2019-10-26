@@ -1,0 +1,58 @@
+- hosts: linuxenvanter:securitylinuxenvanter
+  gather_facts: true
+  become_method: runas
+  tasks:
+    - name: Hostname Belirleme
+      command: hostname
+      register: value1
+
+
+
+ #   - debug:
+  #     msg: "sunucu ismi --> {{ ansible_hostname }} "
+  #  - debug:
+   #    msg: " {{ value1.stdout }} "
+
+
+    - name: Ansible insert lineinfile example
+      lineinfile:
+        dest: /etc/ansible/server.txt
+        line: HOSTNAME         IP          OS    Version
+        state: present
+        create: yes
+      run_once: true
+      delegate_to: localhost
+
+
+
+    - name: Ansible insert lineinfile example
+      lineinfile:
+        dest: /etc/ansible/server.txt
+        line: "{{ ansible_hostname }}  {{ ansible_default_ipv4.address }}  {{ ansible_distribution }} {{ ansible_distribution_version }} "
+      delegate_to: localhost
+
+    - name: Copy file with owner and permissions
+      copy:
+        src: /etc/ansible/server.txt
+        dest: /etc/ansible/linuxenvanter/
+      delegate_to: localhost
+
+    - name: Ansible delete multiple file example
+      file:
+        path: /etc/ansible/server.txt
+        state: absent
+      delegate_to: localhost
+
+    - name: Send e-mail to inform linux inventory
+      connection: local
+      mail:
+        host: localhost
+        port: 25
+        subject: Linux Inventory
+        body: Hi, This is a Linux Inventory of Intertech. This linux inventory is automated by Ansible.
+        from: ansible@intertech.com.tr
+        to: anil.dalkilic@intertech.com.tr
+        cc: cem.bayram2@intertech.com.tr
+        attach: /etc/ansible/linuxenvanter/server.txt
+      run_once: true
+      delegate_to: localhost
