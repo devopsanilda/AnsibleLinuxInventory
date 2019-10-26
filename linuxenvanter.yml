@@ -2,7 +2,7 @@
   gather_facts: true
   become_method: runas
   tasks:
-    - name: Hostname Belirleme
+    - name: Hostname
       command: hostname
       register: value1
 
@@ -37,7 +37,7 @@
         dest: /etc/ansible/linuxenvanter/
       delegate_to: localhost
 
-    - name: Ansible delete multiple file example
+    - name: Ansible delete file 
       file:
         path: /etc/ansible/server.txt
         state: absent
@@ -49,10 +49,10 @@
         host: localhost
         port: 25
         subject: Linux Inventory
-        body: Hi, This is a Linux Inventory of Intertech. This linux inventory is automated by Ansible.
-        from: ansible@intertech.com.tr
-        to: anil.dalkilic@intertech.com.tr
-        cc: cem.bayram2@intertech.com.tr
+        body: Hi, This is a Linux Inventory.  This linux inventory is automated by Ansible.
+        from: ansible@***.com.tr
+        to: anil.dalkilic@***.com.tr
+        cc: ****@***.com.tr
         attach: /etc/ansible/linuxenvanter/server.txt
       run_once: true
       delegate_to: localhost
