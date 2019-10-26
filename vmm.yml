@@ -2,7 +2,7 @@
   gather_facts: false
   become_method: runas
   tasks:
-    - name: register inventery as an excel file
+    - name: register inventoryy from SCVMM server as an excel file
       win_shell: Get-SCVirtualMachine –VMMServer localhost | where {$_.status -eq "Running"} |  select -property Name, ComputerName, OperatingSystem, Memory, CPUCount  | sort -Property  OperatingSystem | Export-Csv -NoTypeInformation -Delimiter ';' .\linuxenvanter.csv  
 
     - name: Store excelfile into ansible server
@@ -11,9 +11,9 @@
         dest: /etc/ansible/linuxenvanter/
         flat: yes
 
-    - name: remove windows entry on the inventory 
+    - name: remove windows entry on the linux inventory 
       connection: local
-      shell: grep -v "Windows" /etc/ansible/linuxenvanter/linuxenvanter.csv > /etc/ansible/linuxenvanter/intertech_linux_inventory.csv
+      shell: grep -v "Windows" /etc/ansible/linuxenvanter/linuxenvanter.csv > /etc/ansible/linuxenvanter/linux_inventory.csv
       args:
         executable: /bin/bash
       run_once: true
@@ -32,10 +32,10 @@
         host: localhost
         port: 25
         subject: Linux Inventory
-        body: Hi, This is a Linux Inventory of Intertech Company. This linux inventory is automated by Ansible.
-        from: ansible@intertech.com.tr
-        to: Hakan.Aribas@intertech.com.tr
-        cc: INTERTECHASYSistemYonetimi@intertech.com.tr, Salih.Eliguzel@intertech.com.tr, anil.dalkilic@intertech.com.tr
-        attach: /etc/ansible/linuxenvanter/intertech_linux_inventory.csv
+        body: Hi, This is a Linux Inventory. This linux inventory is automated by Ansible.
+        from: ansible@*.com.tr
+        to: Anil.Dalkilic@*.com.tr
+        cc: * * * *@*.com.tr
+        attach: /etc/ansible/linuxenvanter/linux_inventory.csv
       run_once: true
       delegate_to: localhost   
